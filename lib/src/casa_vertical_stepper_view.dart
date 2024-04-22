@@ -1,5 +1,6 @@
 import 'package:casa_vertical_stepper/src/model/stepper_steps.dart';
 import 'package:flutter/material.dart';
+
 part "../src/utils/consts.dart";
 
 class CasaVerticalStepperView extends StatefulWidget {
@@ -16,6 +17,7 @@ class CasaVerticalStepperView extends StatefulWidget {
   final bool isExpandable;
   final bool showStepStatusWidget;
   final ScrollPhysics? physics;
+
   const CasaVerticalStepperView({
     required this.steps,
     this.seperatorColor,
@@ -50,7 +52,7 @@ class _CasaVerticalStepperViewState extends State<CasaVerticalStepperView> {
       if (step.visible) steps.add(step);
     }
     _keys =
-        List<GlobalKey>.generate(widget.steps.length, (int i) => GlobalKey());
+    List<GlobalKey>.generate(widget.steps.length, (int i) => GlobalKey());
     return _buildVertical();
   }
 
@@ -58,23 +60,25 @@ class _CasaVerticalStepperViewState extends State<CasaVerticalStepperView> {
     return widget.isExpandable
         ? _buildPanel()
         : ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            physics: widget.physics ?? const NeverScrollableScrollPhysics(),
-            children: steps
-                .map((step) => Visibility(
-                      visible: step.visible,
-                      child: Column(
-                        key: _keys[steps.indexOf(step)],
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          _buildVerticalHeader(step),
-                          _buildVerticalBody(step),
-                        ],
-                      ),
-                    ))
-                .toList(),
-          );
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: widget.physics ?? const NeverScrollableScrollPhysics(),
+      children: steps
+          .map((step) =>
+          Visibility(
+            visible: step.visible,
+            child: Column(
+              key: _keys[steps.indexOf(step)],
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _buildVerticalHeader(step),
+                if(steps.indexOf(step) < steps.length - 1)
+                  _buildVerticalBody(step),
+              ],
+            ),
+          ))
+          .toList(),
+    );
   }
 
   Widget _buildPanel() {
@@ -92,7 +96,9 @@ class _CasaVerticalStepperViewState extends State<CasaVerticalStepperView> {
       children: steps.map<ExpansionPanel>((StepperStep step) {
         return ExpansionPanel(
           backgroundColor: widget.backgroundColor ??
-              Theme.of(context).scaffoldBackgroundColor,
+              Theme
+                  .of(context)
+                  .scaffoldBackgroundColor,
           canTapOnHeader: true,
           headerBuilder: (BuildContext context, bool isExpanded) {
             return _buildVerticalHeader(step);
